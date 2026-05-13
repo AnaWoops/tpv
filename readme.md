@@ -1,6 +1,6 @@
 # 📊 TPV Pequeño Comercio - Gestión Ágil y Sencilla
 
-Este es un sistema de **Terminal Punto de Venta (TPV)** ligero y profesional, diseñado para pequeños negocios que necesitan llevar su contabilidad diaria sin complicaciones. El sistema es totalmente responsivo y está optimizado para su uso en tablets, móviles y PCs.
+Este es un sistema de **Terminal Punto de Venta (TPV)** ligero y profesional, diseñado para pequeños negocios que necesitan llevar su contabilidad diaria sin complicaciones. El sistema es totalmente responsive y está optimizado para su uso en tablets, móviles y PCs.
 
 > **Propósito:** Ofrecer una herramienta intuitiva para usuarios sin conocimientos técnicos, centralizando ventas, cierres de caja y reportes.
 
@@ -12,7 +12,7 @@ Este es un sistema de **Terminal Punto de Venta (TPV)** ligero y profesional, di
 * **Gestión de Tickets:** Sistema de selección múltiple para generar tickets de venta formateados para impresoras térmicas de 80mm.
 * **Blindaje de Cierre:** Función de bloqueo de registros para días ya cerrados, garantizando la integridad de la contabilidad.
 * **Entorno de Pruebas (Sandbox):** Lógica de detección automática que desvía la conexión a una base de datos de testeo para el usuario "pruebas", permitiendo ensayos sin alterar los registros reales.
-* **Reportes PDF:** Generación automática de resúmenes (diarios, semanales y mensuales) listos para imprimir o enviar.
+* **Reportes PDF:** Generación automática de resúmenes (diarios, semanales y mensuales) listos para generar un archivo pdf.
 * **Diseño Mobile-First:** Menús desplegables y tarjetas interactivas pensadas para la agilidad en el punto de venta.
 * **Seguridad por Roles:** Diferenciación entre administradores (gestión de personal y reapertura de días) y empleados.
 
