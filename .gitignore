@@ -1,0 +1,26 @@
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Configuración local
+.env
+
+# Logs
+*.log
+
+# Dependencias (si usas composer)
+vendor/
+
+# Archivos temporales
+*.tmp
+*.cache
+
+# VS Code (opcional)
+.vscode/
+
+# Base de datos local (MUY IMPORTANTE)
+*.sqlite
+*.db
+
+conexion.php
+*.log

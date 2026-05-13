@@ -1,0 +1,493 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+}
+
+.container {
+    width: 800px;
+    margin: 30px auto;
+    background: white;
+    padding: 25px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* ESTILOS DE LA CABECERA */
+.header {
+    background-color: #f5e3a1;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+/* REGLAS PARA QUE LA LUPA SOLO SALGA EN EL BOTON DE BUSCAR */
+.header a[href="buscar.php"] button {
+    background: white;
+    border: 2px solid #e8d38c;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+/* PONER EL ICONO DE LA LUPA SOLO EN EL BOTON DE BUSCAR */
+.header a[href="buscar.php"] button::after {
+    content: " 🔍";
+}
+
+.cerrado {
+    margin-top: 10px;
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background-color: #f5e3a1;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #e8d38c;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* ESTILOS PARA PONER LA CANTIDAD Y EL BOTON EN LA MISMA FILA */
+.form-row-inline {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+.form-row-inline input {
+    flex: 1;
+    margin-bottom: 0; /* PARA QUE EL INPUT QUEDE A LA MISMA ALTURA QUE EL BOTON */
+}
+.form-row-inline button {
+    flex: 1;
+    margin-top: 5px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th {
+    background-color: #f5e3a1;
+    padding: 10px;
+    text-align: left;
+}
+
+th.acciones-header {
+    text-align: center;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.importe {
+    text-align: right;
+}
+
+.acciones-col {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.acciones-col a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    margin: 0 4px;
+    border-radius: 6px;
+    background-color: #f5e3a1;
+    text-decoration: none;
+}
+
+.acciones-col a:hover {
+    background-color: #e8d38c;
+}
+
+.acciones {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.total {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: right;
+}
+
+.botones-top {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.botones-top a {
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+.modal-bg {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.modal {
+    background: white;
+    width: 400px;
+    margin: 150px auto;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    background-color: #f5e3a1;
+    padding: 15px;
+    font-weight: bold;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 15px;
+    text-align: right;
+}
+
+.btn-cancel {
+    background: #ccc;
+    margin-right: 10px;
+}
+
+.btn-confirm {
+    background: #f5e3a1;
+}
+
+/* CONFIGURACION PARA EL ORDENADOR QUE OCULTA LAS COSAS DEL MOVIL */
+.movil-resumen,
+.movimientos-movil,
+.slide {
+    display: none;
+}
+
+/* DISEÑO DEL BOTON DE BORRAR */
+#btn-confirm-borrar {
+    display: inline-block;
+    background: #f5e3a1;
+    color: black;
+    padding: 10px 15px;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+#btn-confirm-borrar:hover {
+    background-color: #e8d38c;
+}
+
+.modal-footer form {
+    display: inline;
+}
+
+/* CONFIGURACION PARA QUE EN EL MOVIL SE VEA TODO BIEN */
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        margin: 0;
+        padding: 15px;
+        box-shadow: none;
+    }
+
+    /* CUIDADO CON ESTO PARA QUE NO SE DESCUADRE EL DISEÑO */
+    .header {
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+    }
+
+    /* QUITAR LAS COSAS DEL ORDENADOR */
+    table,
+    .botones-top,
+    .container > .total {
+        display: none;
+    }
+
+    /* ENSEÑAR LAS COSAS DEL MOVIL */
+    .movil-resumen {
+        display: block;
+        margin: 15px 0 20px 0;
+    }
+
+    .movimientos-movil {
+        display: none;
+        margin-top: 15px;
+    }
+
+    .movimientos-movil.activo {
+        display: block;
+    }
+
+    .slide {
+        display: none;
+        background: #f5e3a1;
+        border-radius: 15px;
+        padding: 20px;
+        margin: 0 10px 15px 10px;
+        text-align: center;
+    }
+
+    .slide.active {
+        display: block;
+    }
+
+    .slide .titulo {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .slide .fecha {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .slide .total {
+        font-size: 32px;
+        font-weight: bold;
+        margin: 15px 0;
+        text-align: center;
+    }
+
+    .mov-item {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        border-bottom: 1px solid #eee;
+    }
+
+    .mov-fecha {
+        font-size: 12px;
+        color: #777;
+        margin-bottom: 5px;
+    }
+
+    .mov-linea {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .mov-concepto {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .mov-importe {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .mov-acciones {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .mov-acciones a {
+        flex: 1;
+        text-align: center;
+        padding: 8px;
+        border-radius: 6px;
+        text-decoration: none;
+        color: black;
+        font-weight: bold;
+    }
+
+    .mov-acciones a:first-child {
+        background: #e9ecef;
+    }
+
+    .mov-acciones a:first-child:hover {
+        background: #d6d8db;
+    }
+
+    .mov-acciones a:last-child {
+        background: #f8d7da;
+    }
+
+    .mov-acciones a:last-child:hover {
+        background: #f1b0b7;
+    }
+
+    form {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    input {
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    button {
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    h2 {
+        font-size: 18px;
+        margin-top: 20px;
+    }
+
+    .movil-resumen form {
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+        margin-top: 10px;
+    }
+
+    .slide form button {
+        width: auto;
+        padding: 8px 16px;
+        background: #fff;
+        border: 2px solid #e8d38c;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    .acciones {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .acciones button {
+        width: 100%;
+    }
+
+    .modal {
+        width: 90%;
+        margin: 80px auto;
+        border-radius: 10px;
+    }
+
+    .modal-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-footer button,
+    .modal-footer a {
+        width: 100%;
+    }
+
+    .acciones form {
+        display: none;
+    }
+
+    .toggle-movimientos {
+        cursor: pointer;
+    }
+
+    .toggle-movimientos::after {
+        content: "▼";
+        font-size: 12px;
+        margin-left: 8px;
+    }
+
+    .modal-footer a {
+        text-align: center;
+        display: block;
+    }
+}
+
+/* ESTILOS PARA CUANDO ACTIVAMOS EL MODO DE GENERAR TICKETS */
+.barra-acciones-secundaria {
+    display: flex;
+    justify-content: flex-end; 
+    margin-top: 15px; 
+    margin-bottom: 20px;
+}
+
+.btn-ticket {
+    background-color: #4e3420; 
+    color: #ffffff;
+    font-weight: bold;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+    transition: all 0.2s ease;
+}
+
+.btn-ticket.activo {
+    background-color: #c8a46b; 
+    color: #4e3420;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); 
+}
+
+.btn-generar-ticket {
+    background-color: #4e3420; 
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-generar-ticket:hover {
+    background-color: #362315;
+}
+
+/* CLASES QUE USA EL JAVASCRIPT PARA ENSEÑAR U OCULTAR COSAS */
+body.modo-ticket .ticket-ui-block { display: block !important; }
+body.modo-ticket .ticket-ui-inline { display: block !important; }
+body.modo-ticket .ticket-ui-table { display: table-cell !important; }
