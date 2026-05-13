@@ -11,6 +11,7 @@ Este es un sistema de **Terminal Punto de Venta (TPV)** ligero y profesional, di
 * **Registro de Movimientos:** Interfaz rápida para entradas y salidas de caja con autocompletado de precios basado en el histórico de ventas.
 * **Gestión de Tickets:** Sistema de selección múltiple para generar tickets de venta formateados para impresoras térmicas de 80mm.
 * **Blindaje de Cierre:** Función de bloqueo de registros para días ya cerrados, garantizando la integridad de la contabilidad.
+* **Entorno de Pruebas (Sandbox):** Lógica de detección automática que desvía la conexión a una base de datos de testeo para el usuario "pruebas", permitiendo ensayos sin alterar los registros reales.
 * **Reportes PDF:** Generación automática de resúmenes (diarios, semanales y mensuales) listos para imprimir o enviar.
 * **Diseño Mobile-First:** Menús desplegables y tarjetas interactivas pensadas para la agilidad en el punto de venta.
 * **Seguridad por Roles:** Diferenciación entre administradores (gestión de personal y reapertura de días) y empleados.
@@ -25,7 +26,7 @@ Este es un sistema de **Terminal Punto de Venta (TPV)** ligero y profesional, di
 * **Librerías:** [DomPDF](https://github.com/dompdf/dompdf) para exportación de documentos.
 
 ### 📂 Estructura del Proyecto
-* `conexion.php`: Singleton de conexión a DB y configuración de entorno (HTTPS/Timezone).
+* `conexion.php`: Singleton de conexión a DB, configuración de entorno (HTTPS/Timezone) y gestión de entorno Sandbox.
 * `seguridad.php`: Middleware de validación de sesiones.
 * `index.php`: Panel principal dinámico con estados (Abierto/Cerrado).
 * `guardar.php` / `editar.php` / `borrar.php`: CRUD completo de movimientos.
