@@ -195,9 +195,11 @@ $total_ticket = 0;
     </div>
 
     <div class="acciones-preview">
-        <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir Ticket</button>
+        <button class="btn-imprimir" onclick="imprimirTicketDinamico()">🖨️ Imprimir Ticket</button>
         <a href="index.php" class="btn-volver">⬅ Volver al inicio</a>
     </div>
 
+    </div> <script src="scripts.js"></script>
+    
 </body>
 </html>

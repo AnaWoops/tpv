@@ -116,3 +116,27 @@ function generarTicket() {
     // MANDAR LOS IDS A LA PAGINA QUE GENERA EL TICKET FINAL
     window.location.href = 'ticket.php?ids=' + ids;
 }
+
+//FUNCIÓN QUE HACE QUE LOS TICKETS SE CORTEN CUANDO TERMINA LA IMPRESIÓN
+function imprimirTicketDinamico() {
+    const ticket = document.querySelector('.ticket-preview-container');
+    const alturaPx = ticket.offsetHeight;
+    const alturaMm = Math.ceil(alturaPx * 0.264583) + 15;
+    
+    const estilo = document.createElement('style');
+    estilo.innerHTML = `
+        @media print {
+            @page { 
+                size: 72mm ${alturaMm}mm !important; 
+                margin: 0 !important; 
+            }
+        }
+    `;
+    document.head.appendChild(estilo);
+    
+    window.print();
+    
+    setTimeout(() => {
+        document.head.removeChild(estilo);
+    }, 1000);
+}
