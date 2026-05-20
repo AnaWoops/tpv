@@ -117,26 +117,81 @@ function generarTicket() {
     window.location.href = 'ticket.php?ids=' + ids;
 }
 
-//FUNCIÓN QUE HACE QUE LOS TICKETS SE CORTEN CUANDO TERMINA LA IMPRESIÓN
-function imprimirTicketDinamico() {
-    const ticket = document.querySelector('.ticket-preview-container');
-    const alturaPx = ticket.offsetHeight;
-    const alturaMm = Math.ceil(alturaPx * 0.264583) + 15;
+//-----------------------------------------------------------------------------------------
+
+function imprimirTicketHTML() {
+    // PASO 1: Hacemos la foto aislando el ancho a 576px (límite del cabezal de 80mm)
+    var elemento = document.querySelector('.ticket-preview-container');
     
-    const estilo = document.createElement('style');
-    estilo.innerHTML = `
-        @media print {
-            @page { 
-                size: 72mm ${alturaMm}mm !important; 
-                margin: 0 !important; 
-            }
+    if (!elemento) {
+        alert("Error: No se encuentra el diseño del ticket en la pantalla.");
+        return;
+    }
+
+    html2canvas(elemento, {
+        backgroundColor: "#FFFFFF",
+        scale: 1, // A escala 1 para asegurar que no nos pasamos de memoria
+        onclone: function (documentClonado) {
+            // Ajustamos el ticket "fantasma" antes de la foto para que encaje perfecto en el rollo
+            var ticketClonado = documentClonado.querySelector('.ticket-preview-container');
+            ticketClonado.style.width = '576px';
+            ticketClonado.style.maxWidth = '576px';
+            ticketClonado.style.boxSizing = 'border-box';
+            ticketClonado.style.boxShadow = 'none'; // Fuera sombras para imprimir
+            ticketClonado.style.borderRadius = '0'; // Bordes rectos
         }
-    `;
-    document.head.appendChild(estilo);
-    
-    window.print();
-    
-    setTimeout(() => {
-        document.head.removeChild(estilo);
-    }, 1000);
+    }).then(function(canvas) {
+        // Extraemos solo el código base64 limpio
+        var fotoBase64 = canvas.toDataURL("image/png").split(',')[1];
+        
+        // Pasamos al siguiente paso
+        conectarYImprimir(fotoBase64);
+        
+    }).catch(function(error) {
+        alert("Error de Javascript al capturar la imagen: " + error);
+    });
+}
+
+function conectarYImprimir(fotoBase64) {
+    // PASO 2: Conectamos con QZ Tray
+    if (!qz.websocket.isActive()) {
+        qz.websocket.connect().then(function() {
+            mandarFoto(fotoBase64);
+        }).catch(function(e) {
+            alert("Error: QZ Tray está cerrado o bloqueado. " + e);
+        });
+    } else {
+        mandarFoto(fotoBase64);
+    }
+}
+
+function mandarFoto(fotoBase64) {
+    // PASO 3: Enviamos la foto junto con los comandos físicos corregidos
+    qz.printers.find("Printer-POS-80").then(function(printer) {
+        var config = qz.configs.create(printer);
+        
+        var data = [
+            // ¡AQUÍ ESTABA EL ERROR! La sintaxis correcta de QZ Tray es format: 'command', flavor: 'hex'
+            { type: 'raw', format: 'command', flavor: 'hex', data: '1B40' }, // Reset
+            { type: 'raw', format: 'command', flavor: 'hex', data: '1B6101' }, // Centrar
+            { 
+                type: 'raw', 
+                format: 'image', 
+                flavor: 'base64', 
+                data: fotoBase64, 
+                options: { language: "ESCPOS", dotDensity: "double" } // Pasa la foto a calidad gráfica térmica
+            },
+            { type: 'raw', format: 'command', flavor: 'hex', data: '1B6405' }, // 5 saltos de margen inferior
+            { type: 'raw', format: 'command', flavor: 'hex', data: '1D564200' } // Hachazo de la guillotina
+        ];
+        
+        return qz.print(config, data);
+        
+    }).then(function() {
+        // Todo perfecto, volvemos a inicio
+        window.location.href = "index.php";
+    }).catch(function(e) {
+        console.error(e);
+        alert("Fallo al enviar la orden final a la impresora: " + e);
+    });
 }
