@@ -2,7 +2,9 @@
 include("seguridad.php");
 include("conexion.php");
 
-// SEGURIDAD PARA QUE NO NOS LA LIEN CON LOS DATOS QUE LLEGAN POR LA URL
+// =========================================================
+// 🛡️ BLINDAJE DE SEGURIDAD EXTREMA
+// =========================================================
 $fecha_cruda = $_GET['fecha'] ?? date("Y-m-d");
 if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_cruda)) {
     $fecha = $fecha_cruda;
@@ -13,8 +15,9 @@ if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_cruda)) {
 $accion_cruda = $_GET['accion'] ?? 'dia';
 $acciones_permitidas = ['dia', 'semana', 'mes'];
 $accion = in_array($accion_cruda, $acciones_permitidas) ? $accion_cruda : 'dia';
+// =========================================================
 
-// ARREGLAR LA FECHA PARA QUE SALGA EN CRISTIANO Y SE ENTIENDA
+// 👉 Fecha bonita en español
 $meses = [
     1 => "Enero", 2 => "Febrero", 3 => "Marzo",
     4 => "Abril", 5 => "Mayo", 6 => "Junio",
@@ -29,7 +32,7 @@ $fecha_texto = "$dia_num de $mes_nombre de $anio";
 
 $total = null;
 
-// MIRAR SI EL DIA ESTA CERRADO YA EN LA BASE DE DATOS
+// 🔒 Comprobar si el día está cerrado
 $sql_cierre = "SELECT id FROM cierres 
                WHERE tipo = 'dia' 
                AND fecha_inicio = '$fecha'";
@@ -37,11 +40,12 @@ $sql_cierre = "SELECT id FROM cierres
 $resultado_cierre = $conn->query($sql_cierre);
 $dia_cerrado = ($resultado_cierre->num_rows > 0);
 
-// SACAR LOS MOVIMIENTOS QUE HAY GUARDADOS
+// Obtener movimientos
 $sql = "SELECT * FROM movimientos WHERE fecha = '$fecha' ORDER BY id DESC";
 $resultado = $conn->query($sql);
 
-// CALCULAR LOS PRECIOS AUTOMATICOS SEGUN LO QUE YA HEMOS VENDIDO ANTES
+// 🧠 CÁLCULO DE PRECIOS AUTOMÁTICOS
+// Buscamos todos los movimientos para aprender los precios unitarios
 $sql_historial = "SELECT concepto, importe FROM movimientos WHERE concepto != '' ORDER BY id ASC";
 $res_hist = $conn->query($sql_historial);
 $precios_auto = [];
@@ -51,7 +55,7 @@ if ($res_hist) {
         $concepto_raw = trim($row['concepto']);
         $importe_total = floatval($row['importe']);
         
-        // MIRAR SI EL NOMBRE TIENE CANTIDAD TIPO PRODUCTO X5
+        // Si el concepto termina en " x5" (espacio, x, número)
         if (preg_match('/(.*)\s+x\s*(\d+)$/i', $concepto_raw, $matches)) {
             $nombre_limpio = trim($matches[1]);
             $cantidad = intval($matches[2]);
@@ -61,15 +65,15 @@ if ($res_hist) {
             $precio_unitario = $importe_total;
         }
         
-        // GUARDAR EL ULTIMO PRECIO QUE CONOCEMOS PARA ESE PRODUCTO
+        // Guardamos el último precio conocido para ese nombre limpio
         $precios_auto[$nombre_limpio] = number_format($precio_unitario, 2, '.', '');
     }
 }
-// ORDENAR LA LISTA POR ORDEN ALFABETICO PARA QUE SEA FACIL BUSCAR
+// Ordenamos alfabéticamente para el datalist
 $conceptos_para_lista = array_keys($precios_auto);
 sort($conceptos_para_lista);
 
-// CALCULAR LOS TOTALES DE HOY DE LA SEMANA Y DEL MES
+// 🔥 TOTALES
 $total_dia = $conn->query("SELECT SUM(importe) total FROM movimientos WHERE fecha='$fecha'")->fetch_assoc()['total'] ?? 0;
 
 $inicio_semana = date("Y-m-d", strtotime("monday this week", strtotime($fecha)));
@@ -78,7 +82,7 @@ $total_semana = $conn->query("SELECT SUM(importe) total FROM movimientos WHERE f
 $inicio_mes = date("Y-m-01", strtotime($fecha));
 $total_mes = $conn->query("SELECT SUM(importe) total FROM movimientos WHERE fecha BETWEEN '$inicio_mes' AND '$fecha'")->fetch_assoc()['total'] ?? 0;
 
-// SACAR EL TOTAL PARA LA VISTA DE ORDENADOR
+// Totales escritorio (NO TOCAR)
 if ($accion === "dia") {
     $sql_total = "SELECT SUM(importe) as total FROM movimientos WHERE fecha = '$fecha'";
 }
@@ -111,7 +115,7 @@ if (isset($sql_total)) {
             margin-left: auto;
         }
         
-        /* QUITAR EL SUBRAYADO FEO QUE PONEN LOS NAVEGADORES A LOS ENLACES */
+        /* 🔪 ELIMINAMOS EL SUBRAYADO POR DEFECTO DE LOS ENLACES EN LOS BOTONES */
         .header-btns a {
             text-decoration: none !important;
         }
@@ -138,14 +142,14 @@ if (isset($sql_total)) {
             cursor: pointer;
         }
 
-        /* QUITAR MIERDAS RARAS QUE SALEN EN ALGUNOS BOTONES */
+        /* 🔪 ELIMINADOR DE LUPAS REBELDES */
         .btn-logout::after,
         .btn-admin-nav::after {
             content: none !important;
             display: none !important;
         }
 
-        /* PARA QUE EN EL MOVIL SOLO SALGA LA LUPA DE BUSCAR Y NO EL TEXTO */
+        /* 📱 MÓVIL: Dejar solo la lupa en el botón Buscar */
         @media (max-width: 768px) {
             .texto-buscar {
                 display: none;
@@ -397,12 +401,12 @@ if (isset($sql_total)) {
 <script src="scripts.js"></script>
 
 <script>
-    // PASAR LOS PRECIOS QUE SABEMOS DE PHP A JAVASCRIPT SIN QUE DE ERROR
-    const mapaPrecios = <?php echo json_encode($precios_auto); ?>;
+    // Pasamos el mapa de precios de PHP a JavaScript de forma segura (con BLINDAJE JSON)
+    const mapaPrecios = <?php echo json_encode($precios_auto, JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT) ?: '{}'; ?>;
 
     function comprobarPrecio(valor) {
         const inputPrecio = document.getElementById('input-precio');
-        // SI YA TENEMOS GUARDADO EL PRECIO DE ESE PRODUCTO LO PONEMOS SOLO
+        // Si el producto existe en nuestra base de datos, rellenamos el precio
         if (mapaPrecios[valor]) {
             inputPrecio.value = mapaPrecios[valor];
         }
@@ -410,7 +414,6 @@ if (isset($sql_total)) {
 </script>
 
 <script>
-    // FUNCION PARA QUE EL RELOJ VAYA CAMBIENDO CADA SEGUNDO
     function actualizarReloj() {
         const ahora = new Date();
         const dia = String(ahora.getDate()).padStart(2, '0');
